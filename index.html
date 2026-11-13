@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internship Command Center</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#182230;--muted:#718096;--line:#e6eaf0;--accent:#5b5ce2;--accent2:#ececff;--green:#16845b;--amber:#a96813;--red:#c24141}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+header{background:#171923;color:white;padding:22px max(22px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+.brand{font-weight:750;font-size:19px;letter-spacing:-.3px}.brand small{display:block;color:#aab1c3;font-size:12px;font-weight:450;letter-spacing:0}
+.wrap{max-width:1180px;margin:28px auto;padding:0 20px}.top{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:28px;letter-spacing:-.8px;margin:0 0 4px}.sub{color:var(--muted);margin:0}
+button,.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:#fff;font-weight:650;cursor:pointer;font-size:14px}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}button.danger{background:#fff1f1;color:var(--red);border:1px solid #ffdada}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;box-shadow:0 3px 12px #17203308}
+.stat-label{color:var(--muted);font-size:13px}.stat-value{font-size:27px;font-weight:750;letter-spacing:-.8px;margin-top:5px}
+.tabs{display:flex;gap:7px;border-bottom:1px solid var(--line);margin:22px 0 16px;overflow:auto}
+.tab{background:transparent;color:var(--muted);border-radius:9px 9px 0 0;padding:11px 14px;white-space:nowrap}.tab.active{color:var(--accent);background:var(--accent2)}
+.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin:12px 0}
+input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:white;color:var(--ink);width:100%}
+.search{max-width:320px}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}td{font-size:14px}
+.pill{display:inline-block;padding:4px 9px;border-radius:30px;font-size:12px;font-weight:700;background:#eef0f5;color:#536071}.pill.applied{background:#e7f6ef;color:var(--green)}.pill.pending{background:#fff4df;color:var(--amber)}.pill.next{background:#ececff;color:var(--accent)}.pill.rejected{background:#fff0f0;color:var(--red)}
+.tablewrap{overflow:auto}.empty{padding:28px;text-align:center;color:var(--muted)}
+.progress{height:9px;background:#edf0f5;border-radius:20px;overflow:hidden;margin:12px 0}.progress span{display:block;height:100%;background:var(--accent);width:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.muted{color:var(--muted)}.doc{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+dialog{border:0;border-radius:16px;padding:0;width:min(560px,calc(100% - 28px));box-shadow:0 20px 80px #11182744}dialog::backdrop{background:#10182888}.modal{padding:22px}.modal h2{margin:0 0 15px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:grid;gap:5px}.field.full{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+small.note{color:var(--muted)}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.wrap{margin:18px auto}.formgrid{grid-template-columns:1fr}h1{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ Internship Command Center<small>YOUR APPLICATIONS, ORGANIZED.</small></div><div style="font-size:12px;color:#b7bfd0">PERSONAL OJT WORKSPACE</div></header>
+<main class="wrap">
+ <div class="top"><div><h1>Good evening. Let's make progress.</h1><p class="sub">Track applications, follow-ups, requirements, and your OJT hours in one place.</p></div><button id="addTop">＋ Add application</button></div>
+ <section class="stats">
+  <div class="card"><div class="stat-label">Companies tracked</div><div class="stat-value" id="total">9</div></div>
+  <div class="card"><div class="stat-label">Applications submitted</div><div class="stat-value" id="applied">5</div></div>
+  <div class="card"><div class="stat-label">Awaiting response</div><div class="stat-value" id="pending">1</div></div>
+  <div class="card"><div class="stat-label">OJT hours completed</div><div class="stat-value" id="hoursStat">0 / 480</div></div>
+ </section>
+ <nav class="tabs"><button class="tab active" data-tab="applications">Applications</button><button class="tab" data-tab="hours">OJT hours</button><button class="tab" data-tab="documents">Documents</button><button class="tab" data-tab="backup">Backup & settings</button></nav>
+ <section id="applications">
+  <div class="toolbar"><div><strong>Company pipeline</strong><div class="muted" style="font-size:13px">Update each company's status as you progress.</div></div><input class="search" id="search" placeholder="Search companies or roles…"></div>
+  <div class="card tablewrap"><table><thead><tr><th>Company</th><th>Status</th><th>Role / track</th><th>Follow-up</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+ </section>
+ <section id="hours" hidden><div class="grid2"><div class="card"><div class="stat-label">OJT progress</div><div class="stat-value" id="hourText">0 / 480 hours</div><div class="progress"><span id="bar"></span></div><div class="muted" id="remaining">480 hours remaining</div><div style="display:flex;gap:8px;align-items:end;margin-top:16px;flex-wrap:wrap"><label class="field" style="max-width:180px">Required OJT hours<input id="targetInline" type="number" min="1" step="1" value="480"></label><button id="saveTargetInline">Save target</button></div></div><div class="card"><strong>Log completed hours</strong><p class="muted">Set your usual shift length, then log it with one click—or enter a different number.</p><div style="display:flex;gap:8px;align-items:end;flex-wrap:wrap"><label class="field" style="max-width:150px">Usual hours per day<input id="dailyHours" type="number" min=".5" step=".5" value="8"></label><button id="quickLog">＋ Log usual day</button></div><div style="display:flex;gap:8px;margin-top:12px"><input id="addHours" type="number" min="0" step=".5" placeholder="Other hours, e.g. 4"><button id="logHours">Add hours</button></div><small class="note">Both the total requirement and usual daily shift are editable.</small></div></div></section>
+ <section id="documents" hidden><div class="card"><strong>OJT document checklist</strong><p class="muted">Tick items as your school or host company completes them.</p><div id="docs"></div></div></section>
+ <section id="backup" hidden><div class="grid2"><div class="card"><strong>Data backup</strong><p class="muted">Your data is saved in this browser. Export a backup before switching devices.</p><button id="export">Export backup (.json)</button> <button class="secondary" id="importBtn">Import backup</button><input type="file" id="importFile" accept="application/json" hidden></div><div class="card"><strong>OJT target hours</strong><p class="muted">Set the total hours required by your school.</p><div style="display:flex;gap:8px"><input id="targetInput" type="number" min="1" value="480"><button id="saveTarget">Save target</button></div><p class="muted" style="font-size:12px">Current target is 480 hours.</p></div></div><div class="card" style="margin-top:14px"><strong>Reset workspace</strong><p class="muted">Restore the original company list. This clears local changes.</p><button class="danger" id="reset">Reset all data</button></div></section>
+</main>
+<dialog id="editor"><form method="dialog" class="modal" id="companyForm"><h2 id="modalTitle">Add application</h2><input type="hidden" id="editId"><div class="formgrid">
+ <label class="field">Company name<input id="name" required placeholder="Company name"></label>
+ <label class="field">Status<select id="status"><option>Next</option><option>Applied</option><option>Pending</option><option>Interview</option><option>Offer</option><option>Rejected</option></select></label>
+ <label class="field">Role / track<input id="role" placeholder="IT Intern, Data Analyst…"></label>
+ <label class="field">Monthly allowance<input id="allowance" placeholder="Not confirmed"></label>
+ <label class="field">Location<input id="location" placeholder="Makati, Taguig, Hybrid…"></label>
+ <label class="field">Follow-up date<input id="followup" type="date"></label>
+ <label class="field full">Application link<input id="url" type="url" placeholder="https://…"></label>
+ <label class="field full">Notes<textarea id="notes" rows="3" placeholder="Contact person, requirements, reminders…"></textarea></label>
+ </div><div class="actions"><button type="button" class="secondary" id="cancel">Cancel</button><button type="submit">Save application</button></div></form></dialog>
+<script>
+const seed=[
+{name:"UnionBank",status:"Applied",role:"NextGen Internship / Pooling 2027"},
+{name:"PwC",status:"Applied",role:"Internship"},
+{name:"IBM",status:"Pending",role:"Internship"},
+{name:"Chevron",status:"Applied",role:"Internship"},
+{name:"Keywords Studios",status:"Applied",role:"IT Intern"},
+{name:"SEAOIL",status:"Next",role:"IT Intern"},
+{name:"RCBC",status:"Next",role:"Internship"},
+{name:"Accenture",status:"Next",role:"Technology / IT Intern"},
+{name:"Shopee",status:"Applied",role:"Internship"}
+];
+const docNames=["School endorsement letter","Memorandum of Agreement (MOA)","Parent/guardian consent (if required)","Medical / health clearance (if required)","Training plan / work plan","Company acceptance letter","Daily time record / attendance form","OJT completion evaluation"];
+let data=JSON.parse(localStorage.getItem("icc-clean")||"null")||{companies:seed.map((x,i)=>({...x,id:i+1,followup:"",url:"",notes:"",allowance:"",location:""})),hours:0,target:480,docs:{}};
+const $=id=>document.getElementById(id);function save(){localStorage.setItem("icc-clean",JSON.stringify(data));render()}
+function render(){let q=$("search").value.toLowerCase();$("rows").innerHTML=data.companies.filter(c=>(c.name+" "+c.role).toLowerCase().includes(q)).map(c=>`<tr><td><strong>${esc(c.name)}</strong><div class="muted" style="font-size:12px">${esc(c.location||"Location not set")}</div></td><td><span class="pill ${c.status.toLowerCase()}">${esc(c.status)}</span></td><td>${esc(c.role||"—")}</td><td>${esc(c.followup||"—")}</td><td><button class="secondary edit" data-id="${c.id}">Edit</button></td></tr>`).join("")||'<tr><td colspan="5" class="empty">No matching companies.</td></tr>';
+$("total").textContent=data.companies.length;$("applied").textContent=data.companies.filter(c=>["Applied","Pending","Interview","Offer"].includes(c.status)).length;$("pending").textContent=data.companies.filter(c=>c.status==="Pending").length;$("hoursStat").textContent=`${data.hours} / ${data.target}`;$("hourText").textContent=`${data.hours} / ${data.target} hours`;$("bar").style.width=Math.min(100,data.hours/data.target*100)+"%";$("remaining").textContent=`${Math.max(0,data.target-data.hours)} hours remaining`;
+$("docs").innerHTML=docNames.map(n=>`<label class="doc"><input type="checkbox" data-doc="${esc(n)}" ${data.docs[n]?"checked":""} style="width:auto"> ${esc(n)}</label>`).join("");$("targetInput").value=data.target;$("targetInline").value=data.target;$("dailyHours").value=data.dailyHours??8;}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function openEditor(c){$("companyForm").reset();$("editId").value=c?.id||"";$("modalTitle").textContent=c?"Edit application":"Add application";for(let k of ["name","status","role","allowance","location","followup","url","notes"])$(k).value=c?.[k]|| (k==="status"?"Next":"");$("editor").showModal()}
+$("addTop").onclick=()=>openEditor();$("cancel").onclick=()=>$("editor").close();$("companyForm").onsubmit=e=>{e.preventDefault();let id=Number($("editId").value);let c={id:id||Date.now(),name:$("name").value.trim(),status:$("status").value,role:$("role").value,allowance:$("allowance").value,location:$("location").value,followup:$("followup").value,url:$("url").value,notes:$("notes").value};if(id)data.companies=data.companies.map(x=>x.id===id?c:x);else data.companies.push(c);$("editor").close();save()};
+$("rows").onclick=e=>{let b=e.target.closest(".edit");if(b)openEditor(data.companies.find(c=>c.id==b.dataset.id))};$("search").oninput=render;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));["applications","hours","documents","backup"].forEach(id=>$(id).hidden=id!==b.dataset.tab)});
+$("logHours").onclick=()=>{let n=Number($("addHours").value);if(n>0){data.hours=Math.round((data.hours+n)*10)/10;$("addHours").value="";save()}};
+$("quickLog").onclick=()=>{let n=Number($("dailyHours").value);if(n>0){data.dailyHours=n;data.hours=Math.round((data.hours+n)*10)/10;save()}};
+$("dailyHours").onchange=()=>{let n=Number($("dailyHours").value);if(n>0){data.dailyHours=n;save()}};
+$("saveTargetInline").onclick=()=>{let n=Number($("targetInline").value);if(n>0){data.target=n;save();alert("Required OJT hours updated.")}};
+$("docs").onchange=e=>{if(e.target.dataset.doc){data.docs[e.target.dataset.doc]=e.target.checked;save()}};
+$("saveTarget").onclick=()=>{let n=Number($("targetInput").value);if(n>0){data.target=n;save();alert("OJT target updated.")}};
+$("export").onclick=()=>{let a=document.createElement("a"),u=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));a.href=u;a.download="internship-command-center-backup.json";a.click();URL.revokeObjectURL(u)};
+$("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(!Array.isArray(x.companies))throw 0;data=x;save();alert("Backup imported.")}catch{alert("That backup file could not be read.")}};
+$("reset").onclick=()=>{if(confirm("Reset all companies, hours and checklist data?")){localStorage.removeItem("icc-clean");data={companies:seed.map((x,i)=>({...x,id:i+1,followup:"",url:"",notes:"",allowance:"",location:""})),hours:0,target:480,docs:{}};save()}};
+render();
+</script>
+</body></html>
